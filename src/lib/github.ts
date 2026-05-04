@@ -1,25 +1,26 @@
 import { RepoIdentifier } from "@/types/github";
 
 export function parseGitHubRepoUrl(url: string): RepoIdentifier | null {
+    const trimmed = url.trim();
+
+    if (!trimmed) return null;
+
+    // Allow 'owner/repo' format
+    if (!trimmed.startsWith("http")) {
+        const [owner, name] = trimmed.split("/");
+        return owner && name ? { owner, name } : null;
+    }
+
     try {
-        const trimmed = url.trim();
-
-        if (!trimmed.startsWith("http")) {
-            const [owner, name] = trimmed.split("/");
-            if (owner && name) return { owner, name };
-            return null;
-        }
-
         const u = new URL(trimmed);
-
         if (u.hostname !== "github.com") return null;
 
-        const parts = u.pathname.split("/").filter(Boolean);
-        const [owner, name] = parts;
+        const [owner, name] = u.pathname
+            .split("/")
+            .filter(Boolean)
+            .slice(0, 2);
 
-        if (!owner || !name) return null;
-
-        return { owner, name };
+        return owner && name ? { owner, name } : null;
     } catch {
         return null;
     }

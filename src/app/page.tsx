@@ -8,8 +8,7 @@ export default function HomePage() {
                   DevLens
               </h1>
               <p className="text-sm text-slate-400">
-                  GitHub Issue Insight Dashboard – ریپازیتوری GitHub رو وارد کن تا
-                  وضعیت Issueها، روند، و insightها رو ببینی.
+                  GitHub Issue Insight Dashboard – Enter your GitHub repository so you can check issues status, process and insights.
               </p>
               <div className="flex justify-center">
                   <RepoInputForm />

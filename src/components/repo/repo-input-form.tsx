@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { parseGitHubRepoUrl } from "@/lib/github";
 import { useRouter } from "next/navigation";
+import { parseGitHubRepoUrl } from "@/lib/github";
 
 export function RepoInputForm() {
-    const [value, setValue] = useState("");
+    const [repoLink, setRepoLink] = useState("");
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
@@ -13,10 +13,10 @@ export function RepoInputForm() {
         e.preventDefault();
         setError(null);
 
-        const result = parseGitHubRepoUrl(value);
+        const result = parseGitHubRepoUrl(repoLink);
 
         if (!result) {
-            setError("آدرس معتبر برای ریپازیتوری GitHub وارد کن. مثل: facebook/react یا https://github.com/facebook/react");
+            setError("Link is not valid! Enter a valid GitHub repository URL. like : facebook/react or https://github.com/facebook/react");
             return;
         }
 
@@ -35,18 +35,24 @@ export function RepoInputForm() {
             </label>
             <input
                 type="text"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="مثال: facebook/react یا https://github.com/facebook/react"
+                value={repoLink}
+                onChange={(e) => setRepoLink(e.target.value)}
+                placeholder="Example: facebook/react or https://github.com/facebook/react"
                 className="w-full px-3 py-2 rounded-md bg-slate-950 border border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 placeholder:text-slate-500"
             />
             {error && <p className="text-xs text-red-400">{error}</p>}
             <button
                 type="submit"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-cyan-500 text-slate-950 text-sm font-semibold hover:bg-cyan-400 transition-colors w-full"
+                disabled={!repoLink.trim()}
+                className={`inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-semibold w-full transition-colors ${
+                    repoLink.trim()
+                        ? "bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+                        : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                }`}
             >
                 Analyze Issues
             </button>
+
         </form>
     );
 }
