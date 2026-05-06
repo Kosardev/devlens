@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { fetchIssues, fetchRepoMeta } from "@/lib/github-api";
 
-export async function GET(_req: Request, { params }: { params: { owner: string; name: string } }) {
+export async function GET(_req: Request, context: { params: Promise<{ owner: string; name: string }> }) {
     try {
-        const { owner, name } = params;
+        const { owner, name } = await context.params;
 
         const [meta, issues] = await Promise.all([
             fetchRepoMeta(owner, name),
@@ -11,9 +11,15 @@ export async function GET(_req: Request, { params }: { params: { owner: string; 
         ]);
 
         return NextResponse.json({ meta, issues });
-    } catch (err: any) {
-        // often octokit errors have status
-        const status = err?.status ?? 500;
+    } catch (err: unknown) {
+
+        const status:number =
+            typeof err === "object" &&
+            err !== null &&
+            "status" in err &&
+            typeof err.status === "number"
+                ? err.status
+                : 500;
 
         // rate limit
         if (status === 403) {
@@ -36,3 +42,5 @@ export async function GET(_req: Request, { params }: { params: { owner: string; 
         );
     }
 }
+
+

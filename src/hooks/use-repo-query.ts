@@ -19,7 +19,7 @@ export function useRepoQuery(owner: string, name: string) {
         staleTime: 60_000,
         gcTime: 10 * 60_000,
         retry: (count, error) => {
-            // If have 404 Error don't retry
+            // If you have 404 Error don't retry
             if (error instanceof Error && error.message.includes("not found")) return false;
             return count < 2;
         },

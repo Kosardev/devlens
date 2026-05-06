@@ -6,6 +6,7 @@ import {use} from "react";
 
 export default function  RepoPage({params,}: { params: Promise<{ owner: string; name: string }>; }) {
     const { owner, name } = use(params);
+
     const { data, isLoading, error } = useRepoQuery(owner, name);
 
     if (isLoading) {
